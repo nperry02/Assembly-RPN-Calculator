@@ -1,0 +1,623 @@
+# Calc40.ums
+# 12/13/23
+#
+# registers:
+# r0: zero register
+# r1: return address
+# r2: stack pointer
+# r3: non volatile
+# r4: non volatile
+# r5: non volatile
+# r6: temp
+# r7: temp
+
+        .zero  r0
+        .temps r6, r7  
+
+
+# defining and initializing the jump table for finding the appropriate function
+# per input, this space is defined in the rodata section and then initialized
+# what each input should be in init section
+
+        .section rodata
+jumptable:
+        .space 256
+
+
+
+        .section init
+m[r0][jumptable + 0] := input_error
+m[r0][jumptable + 1] := input_error
+m[r0][jumptable + 2] := input_error
+m[r0][jumptable + 3] := eof
+m[r0][jumptable + 4] := eof
+m[r0][jumptable + 5] := input_error
+m[r0][jumptable + 6] := input_error
+m[r0][jumptable + 7] := input_error
+m[r0][jumptable + 8] := input_error
+m[r0][jumptable + 9] := input_error
+m[r0][jumptable + 10] := newline
+m[r0][jumptable + 11] := input_error
+m[r0][jumptable + 12] := input_error
+m[r0][jumptable + 13] := input_error
+m[r0][jumptable + 14] := input_error
+m[r0][jumptable + 15] := input_error
+m[r0][jumptable + 16] := input_error
+m[r0][jumptable + 17] := input_error
+m[r0][jumptable + 18] := input_error
+m[r0][jumptable + 19] := input_error
+m[r0][jumptable + 20] := input_error
+m[r0][jumptable + 21] := input_error
+m[r0][jumptable + 22] := input_error
+m[r0][jumptable + 23] := input_error
+m[r0][jumptable + 24] := input_error
+m[r0][jumptable + 25] := input_error
+m[r0][jumptable + 26] := input_error
+m[r0][jumptable + 27] := input_error
+m[r0][jumptable + 28] := input_error
+m[r0][jumptable + 29] := input_error
+m[r0][jumptable + 30] := input_error
+m[r0][jumptable + 31] := input_error
+m[r0][jumptable + 32] := waiting
+m[r0][jumptable + 33] := input_error
+m[r0][jumptable + 34] := input_error
+m[r0][jumptable + 35] := input_error
+m[r0][jumptable + 36] := input_error
+m[r0][jumptable + 37] := input_error
+m[r0][jumptable + 38] := and
+m[r0][jumptable + 39] := input_error
+m[r0][jumptable + 40] := input_error
+m[r0][jumptable + 41] := input_error
+m[r0][jumptable + 42] := multiply
+m[r0][jumptable + 43] := add
+m[r0][jumptable + 44] := input_error
+m[r0][jumptable + 45] := subtract
+m[r0][jumptable + 46] := input_error
+m[r0][jumptable + 47] := divide
+m[r0][jumptable + 48] := entering
+m[r0][jumptable + 49] := entering
+m[r0][jumptable + 50] := entering
+m[r0][jumptable + 51] := entering
+m[r0][jumptable + 52] := entering
+m[r0][jumptable + 53] := entering
+m[r0][jumptable + 54] := entering
+m[r0][jumptable + 55] := entering
+m[r0][jumptable + 56] := entering
+m[r0][jumptable + 57] := entering
+m[r0][jumptable + 58] := input_error
+m[r0][jumptable + 59] := input_error
+m[r0][jumptable + 60] := input_error
+m[r0][jumptable + 61] := input_error
+m[r0][jumptable + 62] := input_error
+m[r0][jumptable + 63] := input_error
+m[r0][jumptable + 64] := input_error
+m[r0][jumptable + 65] := input_error
+m[r0][jumptable + 66] := input_error
+m[r0][jumptable + 67] := input_error
+m[r0][jumptable + 68] := input_error
+m[r0][jumptable + 69] := input_error
+m[r0][jumptable + 70] := input_error
+m[r0][jumptable + 71] := input_error
+m[r0][jumptable + 72] := input_error
+m[r0][jumptable + 73] := input_error
+m[r0][jumptable + 74] := input_error
+m[r0][jumptable + 75] := input_error
+m[r0][jumptable + 76] := input_error
+m[r0][jumptable + 77] := input_error
+m[r0][jumptable + 78] := input_error
+m[r0][jumptable + 79] := input_error
+m[r0][jumptable + 80] := input_error
+m[r0][jumptable + 81] := input_error
+m[r0][jumptable + 82] := input_error
+m[r0][jumptable + 83] := input_error
+m[r0][jumptable + 84] := input_error
+m[r0][jumptable + 85] := input_error
+m[r0][jumptable + 86] := input_error
+m[r0][jumptable + 87] := input_error
+m[r0][jumptable + 88] := input_error
+m[r0][jumptable + 89] := input_error
+m[r0][jumptable + 90] := input_error
+m[r0][jumptable + 91] := input_error
+m[r0][jumptable + 91] := input_error
+m[r0][jumptable + 92] := input_error
+m[r0][jumptable + 93] := input_error
+m[r0][jumptable + 94] := input_error
+m[r0][jumptable + 95] := input_error
+m[r0][jumptable + 96] := input_error
+m[r0][jumptable + 97] := input_error
+m[r0][jumptable + 98] := input_error
+m[r0][jumptable + 99] := change
+m[r0][jumptable + 100] := dup
+m[r0][jumptable + 101] := input_error
+m[r0][jumptable + 102] := input_error
+m[r0][jumptable + 104] := input_error
+m[r0][jumptable + 105] := input_error
+m[r0][jumptable + 106] := input_error
+m[r0][jumptable + 107] := input_error
+m[r0][jumptable + 108] := input_error
+m[r0][jumptable + 109] := input_error
+m[r0][jumptable + 110] := input_error
+m[r0][jumptable + 111] := input_error
+m[r0][jumptable + 112] := pop_off
+m[r0][jumptable + 113] := input_error
+m[r0][jumptable + 114] := input_error
+m[r0][jumptable + 115] := swap
+m[r0][jumptable + 116] := input_error
+m[r0][jumptable + 117] := input_error
+m[r0][jumptable + 118] := input_error
+m[r0][jumptable + 119] := input_error
+m[r0][jumptable + 120] := input_error
+m[r0][jumptable + 121] := input_error
+m[r0][jumptable + 122] := zero
+m[r0][jumptable + 123] := input_error
+m[r0][jumptable + 124] := or
+m[r0][jumptable + 125] := input_error
+m[r0][jumptable + 126] := compliment
+m[r0][jumptable + 127] := input_error
+m[r0][jumptable + 128] := input_error
+m[r0][jumptable + 129] := input_error
+m[r0][jumptable + 130] := input_error
+m[r0][jumptable + 131] := input_error
+m[r0][jumptable + 132] := input_error
+m[r0][jumptable + 133] := input_error
+m[r0][jumptable + 134] := input_error
+m[r0][jumptable + 135] := input_error
+m[r0][jumptable + 136] := input_error
+m[r0][jumptable + 137] := input_error
+m[r0][jumptable + 138] := input_error
+m[r0][jumptable + 139] := input_error
+m[r0][jumptable + 140] := input_error
+m[r0][jumptable + 141] := input_error
+m[r0][jumptable + 142] := input_error
+m[r0][jumptable + 143] := input_error
+m[r0][jumptable + 144] := input_error
+m[r0][jumptable + 145] := input_error
+m[r0][jumptable + 146] := input_error
+m[r0][jumptable + 147] := input_error
+m[r0][jumptable + 148] := input_error
+m[r0][jumptable + 149] := input_error
+m[r0][jumptable + 150] := input_error
+m[r0][jumptable + 151] := input_error
+m[r0][jumptable + 152] := input_error
+m[r0][jumptable + 153] := input_error
+m[r0][jumptable + 154] := input_error
+m[r0][jumptable + 155] := input_error
+m[r0][jumptable + 156] := input_error
+m[r0][jumptable + 157] := input_error
+m[r0][jumptable + 158] := input_error
+m[r0][jumptable + 159] := input_error
+m[r0][jumptable + 160] := input_error
+m[r0][jumptable + 161] := input_error
+m[r0][jumptable + 162] := input_error
+m[r0][jumptable + 163] := input_error
+m[r0][jumptable + 164] := input_error
+m[r0][jumptable + 165] := input_error
+m[r0][jumptable + 166] := input_error
+m[r0][jumptable + 167] := input_error
+m[r0][jumptable + 168] := input_error
+m[r0][jumptable + 169] := input_error
+m[r0][jumptable + 170] := input_error
+m[r0][jumptable + 171] := input_error
+m[r0][jumptable + 172] := input_error
+m[r0][jumptable + 173] := input_error
+m[r0][jumptable + 174] := input_error
+m[r0][jumptable + 175] := input_error
+m[r0][jumptable + 176] := input_error
+m[r0][jumptable + 177] := input_error
+m[r0][jumptable + 178] := input_error
+m[r0][jumptable + 179] := input_error
+m[r0][jumptable + 180] := input_error
+m[r0][jumptable + 181] := input_error
+m[r0][jumptable + 182] := input_error
+m[r0][jumptable + 183] := input_error
+m[r0][jumptable + 184] := input_error
+m[r0][jumptable + 185] := input_error
+m[r0][jumptable + 186] := input_error
+m[r0][jumptable + 187] := input_error
+m[r0][jumptable + 188] := input_error
+m[r0][jumptable + 189] := input_error
+m[r0][jumptable + 190] := input_error
+m[r0][jumptable + 191] := input_error
+m[r0][jumptable + 192] := input_error
+m[r0][jumptable + 193] := input_error
+m[r0][jumptable + 194] := input_error
+m[r0][jumptable + 195] := input_error
+m[r0][jumptable + 196] := input_error
+m[r0][jumptable + 197] := input_error
+m[r0][jumptable + 198] := input_error
+m[r0][jumptable + 199] := input_error
+m[r0][jumptable + 200] := input_error
+m[r0][jumptable + 201] := input_error
+m[r0][jumptable + 202] := input_error
+m[r0][jumptable + 204] := input_error
+m[r0][jumptable + 205] := input_error
+m[r0][jumptable + 206] := input_error
+m[r0][jumptable + 207] := input_error
+m[r0][jumptable + 208] := input_error
+m[r0][jumptable + 209] := input_error
+m[r0][jumptable + 210] := input_error
+m[r0][jumptable + 211] := input_error
+m[r0][jumptable + 212] := input_error
+m[r0][jumptable + 213] := input_error
+m[r0][jumptable + 214] := input_error
+m[r0][jumptable + 215] := input_error
+m[r0][jumptable + 213] := input_error
+m[r0][jumptable + 214] := input_error
+m[r0][jumptable + 215] := input_error
+m[r0][jumptable + 216] := input_error
+m[r0][jumptable + 217] := input_error
+m[r0][jumptable + 218] := input_error
+m[r0][jumptable + 219] := input_error
+m[r0][jumptable + 220] := input_error
+m[r0][jumptable + 221] := input_error
+m[r0][jumptable + 222] := input_error
+m[r0][jumptable + 223] := input_error
+m[r0][jumptable + 224] := input_error
+m[r0][jumptable + 225] := input_error
+m[r0][jumptable + 226] := input_error
+m[r0][jumptable + 227] := input_error
+m[r0][jumptable + 228] := input_error
+m[r0][jumptable + 229] := input_error
+m[r0][jumptable + 230] := input_error
+m[r0][jumptable + 231] := input_error
+m[r0][jumptable + 232] := input_error
+m[r0][jumptable + 233] := input_error
+m[r0][jumptable + 234] := input_error
+m[r0][jumptable + 235] := input_error
+m[r0][jumptable + 236] := input_error
+m[r0][jumptable + 237] := input_error
+m[r0][jumptable + 238] := input_error
+m[r0][jumptable + 239] := input_error
+m[r0][jumptable + 240] := input_error
+m[r0][jumptable + 241] := input_error
+m[r0][jumptable + 242] := input_error
+m[r0][jumptable + 243] := input_error
+m[r0][jumptable + 244] := input_error
+m[r0][jumptable + 245] := input_error
+m[r0][jumptable + 246] := input_error
+m[r0][jumptable + 247] := input_error
+m[r0][jumptable + 248] := input_error
+m[r0][jumptable + 249] := input_error
+m[r0][jumptable + 250] := input_error
+m[r0][jumptable + 251] := input_error
+m[r0][jumptable + 252] := input_error
+m[r0][jumptable + 253] := input_error
+m[r0][jumptable + 254] := input_error
+m[r0][jumptable + 255] := input_error
+
+
+
+
+
+        .section text
+
+
+#       waiting
+# takes in an input from stdin and sets in to register r1
+waiting: 
+        r1 := input()
+#       waiting_with_character
+# determins in char is eof, if not goes to appropriate func from jumptable
+waiting_with_character:
+        push r3 on stack r2
+        push r4 on stack r2
+        r3 := ~0
+        if (r1 == r3) goto eof using r4
+        pop r4 off stack r2
+        pop r3 off stack r2
+        r5 := jumptable + r1
+        r5 := m[r0][r5]
+        goto r5 
+
+#       entering
+# this is the transition from waiting stage to entering stage converts from 
+# ascii to binary and pushes onto stack
+entering: 
+       r1 := r1 - 48
+        push r1 on stack r2
+#       entering_cont
+# gets next input and determins if it is also a digit, if not goes to
+# waiting_with_character
+entering_cont:
+        r1 := input()
+        r5 := jumptable + r1
+        r5 := m[r0][r5]
+        push r3 on stack r2
+        if (r5 == entering) goto enter_final using r3
+        pop r3 off stack r2
+        goto waiting_with_character
+#       entering_final
+# if r1 is a digit converts from ascii to binary and adds to previous input
+# and returns to waiting_cont
+enter_final:
+        pop r3 off stack r2
+        r1 := r1 - 48
+        push r1 on stack r2
+        r1 := r2 + 1
+        r1 := m[r0][r1]
+        r1 := r1 * 10
+        r1 := r1 + m[r0][r2]
+        pop stack r2
+        pop stack r2
+        push r1 on stack r2
+        goto entering_cont
+
+#       input_error
+# prints respective unknown character statement and returns to waiting
+input_error:
+        output "Unknown character '"
+        output r1
+        output "'\n"
+        goto waiting
+
+#       eof
+# halts program once eof has been signaled     
+eof:
+        pop r4 off stack r2
+        pop r3 off stack r2
+        halt
+#       newline
+# initializes counter to iterate through the stack to print
+newline:
+        push r4 on stack r2
+        r1 := 1
+#       newline_loop
+# checks to see if at end of stack, then goes to waiting phase
+newline_loop:
+        r3 := r1 + r2
+        if (r3 <s endstack) goto newline_exec using r4
+        pop r4 off stack r2
+        goto waiting
+#       newline_exec
+# sets r4 to the stack place in memory then goes to print function to output
+newline_exec:
+        r4 := m[r0][r3]
+        output ">>> "
+        goto print
+#       newline_post
+# after print function, updates counter and calls newline_loop function
+newline_post:
+        output "\n"
+        r1 := r1 + 1
+        goto newline_loop
+
+#       add
+# adds top two entries on the stack, pops them and pushes the sum
+add:
+        push r3 on stack r2
+        if (endstack - 3 <s r2) goto understack2 using r3
+        r3 := r2 + 1
+        r1 := m[r0][r3]
+        r3 := r3 + 1
+        r3 := m[r0][r3]
+        r1 := r1 + r3
+        pop r3 off stack r2
+        pop stack r2
+        pop stack r2
+        push r1 on stack r2
+        goto waiting
+
+#       subtract
+# substracts top two entries on the stack, pops them and pushes the difference
+subtract: 
+        push r3 on stack r2
+        if (endstack - 3 <s r2) goto understack2 using r3
+        r3 := r2 + 1
+        r1 := m[r0][r3]
+        r3 := r3 + 1
+        r3 := m[r0][r3]
+        r1 := r3 - r1
+        pop r3 off stack r2
+        pop stack r2
+        pop stack r2
+        push r1 on stack r2
+        goto waiting
+
+#       multiply
+# multiplies top two entries on the stack, pops them and pushes the product 
+multiply:
+        push r3 on stack r2
+        if (endstack - 3 <s r2) goto understack2 using r3
+        r3 := r2 + 1
+        r1 := m[r0][r3]
+        r3 := r3 + 1
+        r3 := m[r0][r3]
+        r1 := r1 * r3
+        pop r3 off stack r2
+        pop stack r2
+        pop stack r2
+        push r1 on stack r2
+        goto waiting
+
+#       divide
+# divide top two entries on the stack, pops them and pushes the quotient
+# checks each entry to see if they are negative, if so calls the appropriate
+# function
+divide:
+        push r3 on stack r2
+        if (endstack - 3 <s r2) goto understack2 using r3
+        push r5 on stack r2
+        r3 := r2 + 2
+        r1 := m[r0][r3]
+        if (r1 == 0) goto div_error
+        r3 := r3 + 1
+        r3 := m[r0][r3]
+        if (r1 <s 0) goto we_know_r1_is_neg using r5
+        if (r3 <s 0) goto we_know_r3_is_neg using r5
+        r1 := r3 / r1
+        pop r5 off stack r2
+        pop r3 off stack r2
+        pop stack r2
+        pop stack r2
+        push r1 on stack r2
+        goto waiting
+
+#       we_know_r1_is_neg
+# turns r1 positive, completes the division and makes the result negative and
+# pushes it onto the stack
+we_know_r1_is_neg:
+        if (r3 <s 0) goto both_are_neg using r5
+        r1 := - r1
+        r1 := r3 / r1
+        r1 := -r1
+        pop r5 off stack r2
+        pop r3 off stack r2
+        pop stack r2
+        pop stack r2
+        push r1 on stack r2
+        goto waiting
+
+#       we_know_r3_is_neg
+# turns r3 positive, completes the division and makes the result negative and 
+# pushes it onto the stack     
+we_know_r3_is_neg:
+        r3 := - r3
+        r1 := r3 / r1
+        r1 := - r1
+        pop r5 off stack r2
+        pop r3 off stack r2
+        pop stack r2
+        pop stack r2
+        push r1 on stack r2
+        goto waiting
+
+#       both_are_neg
+# turns r1 and r3 positive, completes the division and pushes it onto the stack
+both_are_neg:
+        r3 := - r3
+        r1 := - r1
+        r1 := r3 / r1
+        pop r5 off stack r2
+        pop r3 off stack r2
+        pop stack r2
+        pop stack r2
+        push r1 on stack r2
+        goto waiting
+
+#       div error
+# prints error if denominator is zero 
+div_error:
+        pop r5 off stack r2
+        pop r3 off stack r2
+        output "Division by zero\n"
+        goto waiting
+
+#       or
+# bit or's top two entries on the stack, pops them and pushes the result
+or:
+        push r3 on stack r2
+        if (endstack - 3 <s r2) goto understack2 using r3
+        r3 := r2 + 1
+        r1 := m[r0][r3]
+        r3 := r3 + 1
+        r3 := m[r0][r3]
+        r1 := r3 | r1
+        pop r3 off stack r2
+        pop stack r2
+        pop stack r2
+        push r1 on stack r2
+        goto waiting
+
+#       and
+# bit and's top two entries on the stack, pops them and pushes the result
+and:
+        push r3 on stack r2
+        if (endstack - 3 <s r2) goto understack2 using r3
+        r3 := r2 + 1
+        r1 := m[r0][r3]
+        r3 := r3 + 1
+        r3 := m[r0][r3]
+        r1 := r3 & r1
+        pop r3 off stack r2
+        pop stack r2
+        pop stack r2
+        push r1 on stack r2
+        goto waiting
+
+#       change
+# takes the top element of the stack and makes in negative and pushes it 
+# back onto the stack
+change: 
+        push r3 on stack r2
+        if (endstack - 2 <s r2) goto understack1 using r3
+        r3 := r2 + 1
+        r1 := m[r0][r3]
+        r1 := - r1
+        pop r3 off stack r2
+        pop stack r2
+        push r1 on stack r2
+        goto waiting
+
+#       compliment
+# takes the top element of the stack and makes it the bitwise inverse and 
+# pushed it back onto the stack
+compliment:
+        push r3 on stack r2
+        if (endstack - 2 <s r2) goto understack1 using r3
+        r3 := r2 + 1
+        r1 := m[r0][r3]
+        r1 := ~ r1
+        pop r3 off stack r2
+        pop stack r2
+        push r1 on stack r2
+        goto waiting
+
+#       swap
+# switches the values of the top two elements of the stack
+swap:
+        push r3 on stack r2
+        if (endstack - 3 <s r2) goto understack2 using r3
+        r3 := r2 + 1
+        r1 := m[r0][r3]
+        m[r0][r3] := m[r0][r3 + 1]
+        m[r0][r3 + 1] := r1
+        pop r3 off stack r2
+        goto waiting
+
+#       dup
+# duplicates the top element of the stack and pushes it onto the stack
+dup:
+        push r3 on stack r2
+        if (endstack - 2 <s r2) goto understack1 using r3
+        r3 := r2 + 1
+        r1 := m[r0][r3]
+        pop r3 off stack r2
+        push r1 on stack r2
+        goto waiting
+
+#       pop_off
+# removes the top element of the stack
+pop_off:
+        push r3 on stack r2
+        if (endstack - 2 <s r2) goto understack1 using r3
+        pop r3 off stack r2
+        pop stack r2
+        goto waiting
+
+#       zero
+# initializes stack counter, if stack is empty go back to waiting if not go to
+# zero loop      
+zero:
+        r1 := endstack - r2
+        if (r1 != 0) goto zero_loop
+        if (r1 == 0) goto waiting
+#       zero_loop
+# pops from stack and goes to zero
+zero_loop:
+        pop stack r2
+        goto zero
+
+#       understack1
+# error statement for when a unary operation is called but stack is empty
+understack1:
+        pop r3 off stack r2
+        output "Stack underflow---expected at least 1 element\n"
+        goto waiting
+
+#       understack2
+# error statement for when a unary operation is called but stack only has 1 
+# element
+understack2:
+        pop r3 off stack r2
+        output "Stack underflow---expected at least 2 elements\n"
+        goto waiting

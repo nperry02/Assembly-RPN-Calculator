@@ -1,0 +1,22 @@
+# urt0.ums
+# 12/13/23
+#
+# registers:
+# r0: zero register
+# r2: pointer of stack of values
+# r6: temp
+# r7: temp
+
+      .zero  r0
+      .temps r6, r7
+
+
+      .section init
+_ustart:
+      r0 := 0
+      r2 := endstack                              
+
+# space for the stack
+      .section stk
+      .space 1000000
+endstack:

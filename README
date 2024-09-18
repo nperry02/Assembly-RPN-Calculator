@@ -1,0 +1,35 @@
+Authors: 
+        Ella Barnett (ebarne04) and Nate Perry (nperry02)
+
+Acknowledgments:
+        Thank you to the TA's Randy, Isaiah, Julia, and Sam
+
+Everything has been correctly implemented to the best of our knowledge
+
+Uses the recomended calling convention:
+        umasm urt0.ums calc40.ums printd.ums callmain.ums > calc40.um
+
+We implemented the print module by getting each digit of the number putting 
+        the digits into the stack, and then popping them out and printing them
+
+We implemented the value stack by reserving space in segment 0 and having 
+        register r2 be a pointer to the top of the value stack
+
+.sections
+        urt0.ums:       
+                .section init: sets r0 to zero and r2 to be a stack pointer
+                .section stk: creates space for the stack
+        calc40.ums
+                .section rodata: makes space for the jumptable
+                .section init: initilizes the jumptable
+                .section text: machine code for the commands and 
+                waiting-entering loop
+        printd.ums
+                .section text: machine code for the print command
+        callmains.ums
+                .section init: holds main
+
+Time:
+        Hours analyzing: ~7 hrs
+        Hours writing assembly code: ~20 hrs
+        Hours debugging your calculator: ~10 hrs

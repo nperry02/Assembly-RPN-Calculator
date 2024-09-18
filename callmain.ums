@@ -1,0 +1,13 @@
+# callmain.ums
+# 12/13/23
+#
+# registers:
+# r0: zero register
+# r6: temp
+# r7: temp
+
+        .zero  r0
+        .temps r6, r7  
+        .section init
+main: #main, starts the loop
+        goto waiting 

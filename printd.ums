@@ -1,0 +1,76 @@
+# printd.ums
+# 12/13/23
+#
+# registers:
+# r0: zero register
+# r1: loop iterator
+# r2: stack pointer
+# r3: boolean value indicating if past leading zero's yet
+# r4: current number wanting to be printed
+# r5: each digit of number wanting to be printed
+# r6: temp
+# r7: temp
+
+        .zero  r0
+        .temps r6, r7  
+
+        .section text
+
+print: # print r4 in decimal, then returns
+        push r1 on stack r2
+        push r3 on stack r2
+        push r5 on stack r2
+        if (r4 == 0) goto ifzero
+        if (r4 >s 2147483648) goto ifNegative using r5
+        #f (r4 == 2147483648) goto ifBiggest using r5
+        goto positive_print
+
+ifNegative: # print r4 in decimal, then return (r4 must be negative)
+        output '-'
+        r4 := -r4
+        goto positive_print
+
+ifzero: # print r4 in decimal, then return (r4 must be 0)
+        output '0'
+        pop r5 off stack r2
+        pop r3 off stack r2
+        pop r1 off stack r2
+        goto newline_post
+
+ifBiggest: # print r4 in decimal, then return (r4 must be -2147483648)
+        output "-2147483648"
+        pop r5 off stack r2
+        pop r3 off stack r2
+        pop r1 off stack r2
+        goto newline_post
+
+positive_print:         # print the decimal representation of r4, where r4 
+                        # must be positive, then return
+        if (r4 <s 0) goto ifBiggest using r5
+        r1 := 0
+print_rec:                 # puts all digits in r4 into stack recersively
+        r5 := r4 mod 10    # puts the latest digit into r5 and puts it on stack
+        push r5 on stack r2
+        r4 := r4 - r5      # removes the the digit in r5 from r4
+        r4 := r4 / 10
+        r1 := r1 + 1   
+        if (r1 != 11) goto print_rec using r3
+        r3 := 0
+print_rec2:                     # recursively prints out digits in stack
+        pop r5 off stack r2
+        r1 := r1 - 1
+        if (r5 == 0) goto boolTest # if digit is zero see if it is leading 0
+rec2_continue:                  # prints value in r5 
+        r3 := 1
+        r5 := r5 + 48           # makes it into char value of r5
+        output r5
+        if (r1 != 0) goto print_rec2    # tests if r1 (iterator) hits 0
+        pop r5 off stack r2
+        pop r3 off stack r2
+        pop r1 off stack r2
+        goto newline_post
+
+boolTest:       # sees if r3 is 0, either printing r5 if r5 
+                # does not hold leading 0
+        if (r3 == 0) goto print_rec2
+        goto rec2_continue
